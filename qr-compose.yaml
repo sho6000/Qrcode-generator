@@ -1,0 +1,47 @@
+version: '3.1'
+services:
+
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/username
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/password
+    secrets:
+      - username
+      - password
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+      # ME_CONFIG_BASICAUTH_USERNAME: shoun
+      # ME_CONFIG_BASICAUTH_PASSWORD: shouncoss
+      
+      ME_CONFIG_MONGODB_AUTH_USERNAME_FILE: /run/secrets/username
+      ME_CONFIG_MONGODB_AUTH_PASSWORD_FILE: /run/secrets/password
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    depends_on:
+      - mongodb
+    secrets:
+      - username
+      - password
+
+  qr-app:
+    build: .
+    ports:
+      - 8501:8501
+    environment:
+      MONGO_USERNAME: shoun
+      MONGO_PASSWORD: shouncoss
+    depends_on:
+      - mongodb
+
+secrets:
+  username:
+    file: user.txt
+  password:
+    file: pass.txt
+
