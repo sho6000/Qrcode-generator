@@ -11,6 +11,8 @@ services:
     secrets:
       - username
       - password
+    volumes:
+      - mongo-data:/data/db
 
   mongo-express:
     image: mongo-express
@@ -45,3 +47,6 @@ secrets:
   password:
     file: pass.txt
 
+volumes:
+  mongo-data:
+    driver: local
