@@ -12,10 +12,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker Image
-        run: docker build . -t shoun6000/qr-generator:streamlit
+        run: |
+          docker build . -t shoun6000/qr-generator:${{ github.run_number }} .
+          docker tag shoun6000/qr-generator:${{ github.run_number }} shoun6000/qr-generator:latest
 
       - name: Push Docker Image
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
-          docker push shoun6000/qr-generator:streamlit
+          docker push shoun6000/qr-generator:${{ github.run_number }}
+          docker push shoun6000/qr-generator:latest
       
