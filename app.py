@@ -30,7 +30,6 @@ if st.button("Generate & Save"):
         buf = BytesIO()
         qr.save(buf, format="PNG")
         st.image(buf.getvalue(), caption="Generated QR Code")
-
        
         try:
             collection.insert_one({"url": url_input})
