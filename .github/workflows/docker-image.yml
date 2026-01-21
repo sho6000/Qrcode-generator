@@ -13,7 +13,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build . -t shoun6000/qr-generator:${{ github.run_number }} .
+          docker build -t shoun6000/qr-generator:${{ github.run_number }} .
           docker tag shoun6000/qr-generator:${{ github.run_number }} shoun6000/qr-generator:latest
 
       - name: Push Docker Image
