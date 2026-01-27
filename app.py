@@ -1,38 +1,62 @@
 import streamlit as st
 import qrcode
-import pymongo
+import psycopg2
 import os
 from io import BytesIO
 
-DB_USER = os.getenv("MONGO_USERNAME")
-DB_PASS = os.getenv("MONGO_PASSWORD")
-DB_HOST = "mongodb"  
+# PostgreSQL Environment Variables
+DB_USER = os.getenv("POSTGRES_USER")
+DB_PASS = os.getenv("POSTGRES_PASSWORD")
+DB_NAME = os.getenv("POSTGRES_DB")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
 
+def get_connection():
+    return psycopg2.connect(
+        dbname=DB_NAME,
+        user=DB_USER,
+        password=DB_PASS,
+        host=DB_HOST,
+        port=DB_PORT
+    )
+
+# Initialize Database Table
 try:
-    connection_url = f"mongodb://{DB_USER}:{DB_PASS}@{DB_HOST}:27017/"
-    client = pymongo.MongoClient(connection_url, serverSelectionTimeoutMS=5000)
-    db = client["qr_database"]
-    collection = db["history"]
-    
-    client.server_info() 
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS qr_history (
+            id SERIAL PRIMARY KEY,
+            url TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+    conn.commit()
+    cur.close()
+    conn.close()
 except Exception as e:
-    st.error(f"Could not connect to MongoDB: {e}")
+    st.error(f"Could not connect to PostgreSQL: {e}")
 
-
-st.title("QR Code Generator with MongoDB")
+st.title("QR Code Generator with PostgreSQL")
 
 url_input = st.text_input("Enter Link:", placeholder="https://github.com/sho6000/Qrcode-generator")
 
 if st.button("Generate & Save"):
     if url_input:
-        
+        # Generate QR Code
         qr = qrcode.make(url_input)
         buf = BytesIO()
         qr.save(buf, format="PNG")
         st.image(buf.getvalue(), caption="Generated QR Code")
-       
+        
+        # Save to PostgreSQL
         try:
-            collection.insert_one({"url": url_input})
+            conn = get_connection()
+            cur = conn.cursor()
+            cur.execute("INSERT INTO qr_history (url) VALUES (%s)", (url_input,))
+            conn.commit()
+            cur.close()
+            conn.close()
             st.success(f"Link '{url_input}' saved to database!")
         except Exception as e:
             st.error(f"Failed to save to database: {e}")
@@ -40,8 +64,13 @@ if st.button("Generate & Save"):
 if st.checkbox("Show Database History"):
     st.subheader("Last 5 Entries")
     try:
-        entries = collection.find().sort("_id", -1).limit(5)
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT url FROM qr_history ORDER BY id DESC LIMIT 5")
+        entries = cur.fetchall()
         for entry in entries:
-            st.write(f"- {entry['url']}")
+            st.write(f"- {entry[0]}")
+        cur.close()
+        conn.close()
     except Exception as e:
         st.write("No data found or connection issue.")

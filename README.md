@@ -1,4 +1,4 @@
-### TASK
+### TASK 1
 ```
 Containerize a simple app (Node.js/Python/Java) that connects to a database (MySQL/PostgreSQL/MongoDB).
 
@@ -101,7 +101,6 @@ docker-compose -f qr-compose.yaml up --build -d
 
 ![alt text](image.png)
 
-------------------------
 
 - Data persistence enabled using **named volume** in the qr-compose.yaml
 
@@ -165,3 +164,21 @@ DOCKER_TOKEN
 
 ![alt text](image-2.png)
 
+--------------------------------
+
+### TASK 2
+```
+ask: Deploy a web application on Minikube using Helm with PostgreSQL as the database (instead of MongoDB).
+
+Steps:
+
+Set up Minikube and Helm.
+
+Create a Helm chart for the app, including PostgreSQL(PG helm can be pulled from helm repo) as a dependency.
+
+Configure app to connect to PostgreSQL using internal Kubernetes service.
+
+Verify that both app and PostgreSQL are running and connected correctly
+
+Use two different namespaces for application and database
+```

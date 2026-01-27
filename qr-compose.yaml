@@ -1,45 +1,49 @@
 version: '3.1'
 services:
 
-  mongodb:
-    image: mongo
+  postgresql:
+    image: postgres:16
     ports:
-      - 27017:27017
+      - 5432:5432
     environment:
-      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/username
-      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/password
+      POSTGRES_USER_FILE: /run/secrets/username
+      POSTGRES_PASSWORD_FILE: /run/secrets/password
+      POSTGRES_DB: qr_database
     secrets:
       - username
       - password
     volumes:
-      - mongo-data:/data/db
+      - postgres-data:/var/lib/postgresql/data
 
-  mongo-express:
-    image: mongo-express
-    ports:
-      - 8081:8081
-    environment:
-      # ME_CONFIG_BASICAUTH_USERNAME: shoun
-      # ME_CONFIG_BASICAUTH_PASSWORD: shouncoss
+  # mongo-express:
+  #   image: mongo-express
+  #   ports:
+  #     - 8081:8081
+  #   environment:
+  #     # ME_CONFIG_BASICAUTH_USERNAME: shoun
+  #     # ME_CONFIG_BASICAUTH_PASSWORD: shouncoss
       
-      ME_CONFIG_MONGODB_AUTH_USERNAME_FILE: /run/secrets/username
-      ME_CONFIG_MONGODB_AUTH_PASSWORD_FILE: /run/secrets/password
-      ME_CONFIG_MONGODB_SERVER: mongodb
-    depends_on:
-      - mongodb
-    secrets:
-      - username
-      - password
+  #     ME_CONFIG_MONGODB_AUTH_USERNAME_FILE: /run/secrets/username
+  #     ME_CONFIG_MONGODB_AUTH_PASSWORD_FILE: /run/secrets/password
+  #     ME_CONFIG_MONGODB_SERVER: mongodb
+  #   depends_on:
+  #     - mongodb
+  #   secrets:
+  #     - username
+  #     - password
 
   qr-app:
-    build: .
+    build: shoun6000/qr-generator:latest
     ports:
       - 8501:8501
     environment:
-      MONGO_USERNAME: shoun
-      MONGO_PASSWORD: shouncoss
+      POSTGRES_USER: shoun
+      POSTGRES_PASSWORD: shouncoss
+      POSTGRES_DB: qr_database
+      DB_HOST: postgresql
+      DB_PORT: 5432
     depends_on:
-      - mongodb
+      - postgresql
 
 secrets:
   username:
@@ -48,5 +52,5 @@ secrets:
     file: pass.txt
 
 volumes:
-  mongo-data:
+  postgres-data:
     driver: local
