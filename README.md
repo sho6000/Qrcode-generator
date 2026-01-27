@@ -95,11 +95,11 @@ docker-compose -f qr-compose.yaml up --build -d
 
 - Streamlit app running on [localhost:8501](http://localhost:8501/)
 
-![alt text](image-1.png)
+![alt text](./imgs/image.png)
 
 - Mongo express on qr database [localhost:8081](http://localhost:8081/db/qr_database/)
 
-![alt text](image.png)
+![alt text](./imgs/image-1.png)
 
 
 - Data persistence enabled using **named volume** in the qr-compose.yaml
@@ -122,7 +122,7 @@ volumes:
 \\wsl.localhost\docker-desktop\mnt\docker-desktop-disk\data\docker\volumes\qr-code-generator_mongo-data
 ```
 
-![alt text](image-3.png)
+![alt text](./imgs/image-3.png)
 
 ------------------------
 - the image is send to docker hub using github actions CI workflow
@@ -162,7 +162,7 @@ DOCKER_TOKEN
 - values are stored in repo setting under secrets & variables
 - used to authenticate docker hub, [recent docker image workflow](https://github.com/sho6000/Qrcode-generator/actions/runs/21200609380/job/60985360039)
 
-![alt text](image-2.png)
+![alt text](./imgs/image-2.png)
 
 --------------------------------
 

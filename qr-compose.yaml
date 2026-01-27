@@ -5,15 +5,19 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: shoun
-      POSTGRES_PASSWORD: shouncoss
+      POSTGRES_USER_FILE: /run/secrets/username
+      POSTGRES_PASSWORD_FILE: /run/secrets/password
       POSTGRES_DB: qr_database
     ports:
       - 5432:5432
+    secrets:
+      - username
+      - password
     volumes:
       - pgdata:/var/lib/postgresql/data
 
 
+# webUI for postgresql
   admin:
     image: adminer
     restart: always
@@ -24,7 +28,8 @@ services:
 
 
   qr-app:
-    build: shoun6000/qr-generator:latest
+    # build: .
+    image: shoun6000/qr-generator:latest
     ports:
       - 8501:8501
     environment:
@@ -36,11 +41,11 @@ services:
     depends_on:
       - postgresql
 
-# secrets:
-#   username:
-#     file: user.txt
-#   password:
-#     file: pass.txt
+secrets:
+  username:
+    file: user.txt
+  password:
+    file: pass.txt
 
 volumes:
   pgdata:

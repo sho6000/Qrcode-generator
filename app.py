@@ -4,12 +4,6 @@ import psycopg2
 import os
 from io import BytesIO
 
-# POSTGRES_USER: shoun
-#     POSTGRES_PASSWORD: shouncoss
-#     POSTGRES_DB: qr_database
-#     DB_HOST: postgresql
-#     DB_PORT: 5432
-
 # PostgreSQL Environment Variables
 DB_USER = os.getenv("POSTGRES_USER")
 DB_PASS = os.getenv("POSTGRES_PASSWORD")
