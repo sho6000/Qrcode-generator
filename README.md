@@ -166,6 +166,8 @@ DOCKER_TOKEN
 
 --------------------------------
 
+--------------------------------
+
 ### TASK 2
 ```
 ask: Deploy a web application on Minikube using Helm with PostgreSQL as the database (instead of MongoDB).
