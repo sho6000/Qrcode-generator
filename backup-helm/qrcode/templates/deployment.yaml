@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}-deployment
+  namespace: {{ .Values.app.namespace }}
+  labels:
+    app: {{ .Values.app.name }}-dep
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}-pod
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}-pod
+    spec:
+      containers:
+      - name: qr-generator
+        image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+        imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.app.service.port }}
+          name: streamlit
+        
+        # Environment variables from ConfigMap
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.app.name }}-config
+              key: POSTGRES_USER
+        
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.app.name }}-config
+              key: POSTGRES_DB
+        
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.app.name }}-config
+              key: DB_HOST
+        
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.app.name }}-config
+              key: DB_PORT
+        
+        # Environment variable from Secret
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.app.name }}-secret
+              key: POSTGRES_PASSWORD
+        
+        # Resource limits
+        resources:
+          requests:
+            memory: {{ .Values.app.resources.requests.memory | quote}}
+            cpu: {{ .Values.app.resources.requests.cpu | quote}}
+          limits:
+            memory: {{ .Values.app.resources.limits.memory | quote}}
+            cpu: {{ .Values.app.resources.limits.cpu | quote}}
+        
+        # Health checks
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.app.service.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.app.service.port }}
+          initialDelaySeconds: 30
+          periodSeconds: 10

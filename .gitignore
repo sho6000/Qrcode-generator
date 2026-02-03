@@ -1,3 +1,5 @@
 *.env
 user.txt
 pass.txt
+./backup-helm
+./app/my-secret.yaml

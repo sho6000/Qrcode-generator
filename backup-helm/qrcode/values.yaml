@@ -1,0 +1,66 @@
+# QR Code Generator Helm Chart Values
+
+# Application Configuration
+app:
+  name: qr-app
+  namespace: qr-app
+  replicaCount: 2
+  
+  image:
+    repository: shoun6000/qr-generator
+    tag: latest
+    pullPolicy: IfNotPresent
+  
+  service:
+    name: qr-app-loadbalancer
+    type: LoadBalancer
+    port: 8501
+  
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+# PostgreSQL Configuration
+postgres:
+  namespace: qr-db
+  
+  # Database credentials
+  auth:
+    username: admin
+    password: admin
+    database: qr_database
+  
+  # Connection details
+  service:
+    name: postgresql
+    port: 5432
+  
+  # Storage configuration
+  persistence:
+    size: 1Gi
+    storageClassName: standard
+    hostPath: /mnt/postgres-data
+  
+  # Resource limits
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+# ConfigMap data
+configMap:
+  POSTGRES_USER: admin
+  POSTGRES_DB: qr_database
+  DB_HOST: postgresql.qr-db.svc.cluster.local
+  DB_PORT: "5432"
+
+
+postgresql:
+  enabled: false
