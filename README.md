@@ -238,6 +238,10 @@ NAME            NAMESPACE       REVISION        UPDATED                         
 pythonapp       qr-app          4               2026-02-03 18:10:10.6164451 +0530 IST   deployed        qr-app-0.1.0    1.0.0
 ```
 
+- Output
+
+![alt text](./imgs/image-4.png)
+
 #### Packaging
 
 - packing the helm chart for reusability 
