@@ -13,8 +13,6 @@ Push the app image to Docker Hub.
 Use docker-compose to run both containers together.
 ```
 
-#### Setup
-
 #### Prerequisites
 
 - Create credential files for MongoDB authentication:
@@ -184,3 +182,68 @@ Verify that both app and PostgreSQL are running and connected correctly
 
 Use two different namespaces for application and database
 ```
+74
+#### Configuration 
+
+
+
+
+#### Steps
+
+- Pulling the existing postgres helm chart from bitnami repo
+
+
+`helm repo add bitnami https://charts.bitnami.com/bitnami `
+
+
+- Update the repo to pull the repository contents to the local
+ 
+`helm repo update`
+`helm repo list` (shows the list of charts in the repo)
+
+`helm pull bitnami/postgresql --untar` (pulls the chart and unzips the contents from the zip)
+
+- Update the contents in the values.yaml
+
+> Note: If using the **bitnamileagacy/** set the **allowInsecureImages: true**, since bitnami restricts from using unauthorized images for deployment.
+```yaml
+global:
+  security:
+    allowInsecureImages: true
+```
+
+- Install the database
+
+`helm install db ./postgresql -n qr-db`
+
+```cmd
+NAME    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+db      qr-db           1               2026-02-02 15:33:36.0046562 +0530 IST   deployed        postgresql-18.2.3       18.1.0
+```
+
+- Creating helm chart for the python application
+
+`helm create app`
+
+- Modify/Delete existing scaffold and install
+
+`helm install app ./app -n qr-app`
+
+- Upgrade any new changes made to the app
+
+`helm upgrade pythonapp ./app -n qr-app`
+
+```cmd
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+pythonapp       qr-app          4               2026-02-03 18:10:10.6164451 +0530 IST   deployed        qr-app-0.1.0    1.0.0
+```
+
+#### Packaging
+
+- packing the helm chart for reusability 
+
+`helm package app -d ./charts`
+(**_-d ./charts_** stands for the destination folder)
+- `helm repo index ./charts `
+
+

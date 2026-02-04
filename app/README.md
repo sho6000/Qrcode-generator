@@ -41,26 +41,46 @@ helm install my-app ./app -f my-values.yaml
 | `image.tag` | Image tag | `latest` |
 | `service.type` | Service type | `LoadBalancer` |
 | `service.port` | Service port | `8501` |
-| `database.host` | PostgreSQL host | `db-postgresql.qr-db.svc.cluster.local` |
-| `database.port` | PostgreSQL port | `5432` |
-| `database.user` | PostgreSQL user | `admin` |
-| `database.password` | PostgreSQL password | `admin` |
-| `database.name` | Database name | `qr_database` |
 | `resources.requests.memory` | Memory request | `256Mi` |
 | `resources.limits.memory` | Memory limit | `512Mi` |
 
-## Usage with Secrets File
+## Environment Configuration (ConfigMap)
 
-Create a `my-secret.yaml`:
+The ConfigMap is rendered from `envConfig` in values.yaml and injected via `envFrom`.
+
 ```yaml
-database:
-  user: myuser
-  password: mypassword
-  name: mydatabase
-  host: postgres.default.svc.cluster.local
+envConfig:
+  DB_HOST: db-postgresql.qr-db.svc.cluster.local
+  DB_PORT: "5432"
+  POSTGRES_USER: admin
+  POSTGRES_DB: qr_database
 ```
 
-Deploy with secrets:
+## Secrets Configuration (Secret)
+
+The Secret is rendered from `secretConfig` in values.yaml (base64 encoded) and injected via `envFrom`.
+
+```yaml
+secretConfig:
+  POSTGRES_PASSWORD: admin
+```
+
+## Usage with Override File
+
+Create a custom values file (example: `my-secret.yaml`):
+
+```yaml
+envConfig:
+  DB_HOST: db-postgresql.qr-db.svc.cluster.local
+  DB_PORT: "5432"
+  POSTGRES_USER: myuser
+  POSTGRES_DB: mydatabase
+
+secretConfig:
+  POSTGRES_PASSWORD: mypassword
+```
+
+Deploy with overrides:
 ```bash
 helm install my-app ./app -f my-secret.yaml
 ```

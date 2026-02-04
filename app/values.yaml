@@ -160,11 +160,11 @@ tolerations: []
 
 affinity: {}
 
-database:
-  host: "service-name.namespace.svc.cluster.local"
-  port: "5432"
-  user: username-goes-here
-  password: password-goes-here
-  name: database-name-goes-here
+envConfig:
+  DB_HOST: db-postgresql.qr-db.svc.cluster.local
+  DB_PORT: "5432"
+  POSTGRES_USER: admin
+  POSTGRES_DB: qr_database
 
-
+secretConfig:
+  POSTGRES_PASSWORD: admin
