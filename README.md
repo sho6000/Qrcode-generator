@@ -93,11 +93,11 @@ docker-compose -f qr-compose.yaml up --build -d
 
 - Streamlit app running on [localhost:8501](http://localhost:8501/)
 
-![alt text](./imgs/image.png)
+![alt text](./appTEST_images/image.png)
 
 - Mongo express on qr database [localhost:8081](http://localhost:8081/db/qr_database/)
 
-![alt text](./imgs/image-1.png)
+![alt text](./appTEST_images/image-1.png)
 
 
 - Data persistence enabled using **named volume** in the qr-compose.yaml
@@ -120,7 +120,7 @@ volumes:
 \\wsl.localhost\docker-desktop\mnt\docker-desktop-disk\data\docker\volumes\qr-code-generator_mongo-data
 ```
 
-![alt text](./imgs/image-3.png)
+![alt text](./appTEST_images/image-3.png)
 
 ------------------------
 - the image is send to docker hub using github actions CI workflow
@@ -160,7 +160,7 @@ DOCKER_TOKEN
 - values are stored in repo setting under secrets & variables
 - used to authenticate docker hub, [recent docker image workflow](https://github.com/sho6000/Qrcode-generator/actions/runs/21200609380/job/60985360039)
 
-![alt text](./imgs/image-2.png)
+![alt text](./appTEST_images/image-2.png)
 
 --------------------------------
 
@@ -240,7 +240,7 @@ pythonapp       qr-app          4               2026-02-03 18:10:10.6164451 +053
 
 - Output
 
-![alt text](./imgs/image-4.png)
+![alt text](./appTEST_images/image-4.png)
 
 #### Packaging
 
@@ -249,5 +249,75 @@ pythonapp       qr-app          4               2026-02-03 18:10:10.6164451 +053
 `helm package app -d ./charts`
 (**_-d ./charts_** stands for the destination folder)
 - `helm repo index ./charts `
+
+
+--------------------------------
+
+--------------------------------
+
+### TASK 3
+
+```
+follow a umbrella structure to deloy both apps at once like:
+chart
+ 	chart.yaml
+ 	values.yaml
+ 		charts/
+ 			qr_app
+ 			PostgreSQL
+```
+
+#### Steps
+
+- Created a parent chart with name **my-stack** and delete any scaffold present in the folder
+
+- Added _chart.yaml_ & _values.yaml_ files to describe the chart itself
+
+- Updated the parent values with different namespace as _qr-app_ & _qr-db_ 
+
+- Deployed the helm chart revision in the default namespace and then installed pods in different namespaces.
+
+`helm install my-stack .`
+
+- values.yaml updated to the new parent values which is added to the SUB-charts.
+
+```yaml
+qr-code:
+  namespace: qr-app
+  image:
+    registry: docker.io
+    repository: shoun6000/qr-generator
+    pullPolicy: IfNotPresent
+    
+  envConfig:
+    DB_HOST: my-stack-postgresql.qr-db.svc.cluster.local
+
+postgresql:
+  namespaceOverride: qr-db 
+  image:
+    registry: registry-1.docker.io
+    repository: bitnamilegacy/postgresql
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+```
+- Ouput of deployed Chart:
+
+```bash
+PS C:\Users\Accel\OneDrive\Desktop\qr-code-generator\my-stack> helm install my-stack .
+I0402 10:41:10.108935   29052 warnings.go:110] "Warning: spec.SessionAffinity is ignored for headless services"
+NAME: my-stack
+LAST DEPLOYED: Thu Apr  2 10:41:09 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+DESCRIPTION: Install complete
+TEST SUITE: None
+
+```
+
+- Ran _minikube tunnel_ to check the application.
+
+
 
 
