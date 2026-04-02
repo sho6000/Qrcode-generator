@@ -1,0 +1,9 @@
+dependencies:
+- name: qr-code
+  repository: file://./charts/qr-code
+  version: 0.1.0
+- name: postgresql
+  repository: file://./charts/postgresql
+  version: 18.2.3
+digest: sha256:d81d0dbfeedb64a6276d93ae488a53548f4f68f4d77e7adbd2d0e3b6073bf256
+generated: "2026-04-01T17:56:52.7460891+05:30"

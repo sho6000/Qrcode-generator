@@ -1,0 +1,16 @@
+apiVersion: v2
+name: chart
+description: Umbrella chart for QR app + PostgreSQL
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+dependencies:
+  - name: qr-code
+    alias: qr-code
+    version: 0.1.0
+    repository: file://./charts/qr-code
+  - name: postgresql
+    alias: postgresql
+    version: 18.2.3
+    repository: file://./charts/postgresql

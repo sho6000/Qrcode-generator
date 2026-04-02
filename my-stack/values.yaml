@@ -1,0 +1,18 @@
+qr-code:
+  namespace: qr-app
+  image:
+    registry: docker.io
+    repository: shoun6000/qr-generator
+    pullPolicy: IfNotPresent
+    
+  envConfig:
+    DB_HOST: my-stack-postgresql.qr-db.svc.cluster.local
+
+postgresql:
+  namespaceOverride: qr-db 
+  image:
+    registry: registry-1.docker.io
+    repository: bitnamilegacy/postgresql
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  
