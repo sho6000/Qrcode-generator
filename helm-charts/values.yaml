@@ -6,7 +6,7 @@ qr-code:
     pullPolicy: IfNotPresent
     
   envConfig:
-    DB_HOST: my-stack-postgresql.qr-db.svc.cluster.local
+    DB_HOST: helm-charts-postgresql.qr-db.svc.cluster.local
 
 postgresql:
   namespaceOverride: qr-db 
